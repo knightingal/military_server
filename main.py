@@ -6,7 +6,13 @@ def print_hello():
 
 
 class MilitaryHTTPRequestHandler(SimpleHTTPRequestHandler):
-  pass
+
+  def do_GET(self):
+    self.send_response(200)
+    self.send_header("content-length", str(len("MilitaryHTTPRequestHandler")))
+    self.end_headers()
+
+    self.wfile.write(bytes("MilitaryHTTPRequestHandler", "UTF-8"))
 
 
 def run(server_class=HTTPServer, handler_class=MilitaryHTTPRequestHandler):
