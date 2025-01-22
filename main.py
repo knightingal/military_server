@@ -1,3 +1,5 @@
+import datetime
+from PIL import Image
 from http.server import BaseHTTPRequestHandler, HTTPServer, SimpleHTTPRequestHandler
 
 
@@ -13,6 +15,24 @@ class MilitaryHTTPRequestHandler(SimpleHTTPRequestHandler):
     self.end_headers()
 
     self.wfile.write(bytes("MilitaryHTTPRequestHandler", "UTF-8"))
+
+  def do_POST(self):
+    content_length = int(self.headers.get("content-length"))
+    body = self.rfile.read(content_length)
+
+    time = datetime.datetime.now()
+    now = time.strftime("%d-%m-%Y-%H:%M:%S")
+
+    pic_file = open(now + ".jpg", "wb+")
+    pic_file.write(body)
+    pic_file.close()
+
+    img = Image.open(now + ".jpg").convert("RGB")
+    img.save(now + "jp.jpg")
+
+    self.send_response(200)
+    self.send_header("content-length", "0")
+    self.end_headers()
 
 
 def run(server_class=HTTPServer, handler_class=MilitaryHTTPRequestHandler):
