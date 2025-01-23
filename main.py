@@ -2,6 +2,7 @@ import datetime
 from PIL import Image
 from http.server import BaseHTTPRequestHandler, HTTPServer, SimpleHTTPRequestHandler
 
+from paddleocr import PaddleOCR, draw_ocr
 
 def print_hello():
   print("Hello")
@@ -29,6 +30,17 @@ class MilitaryHTTPRequestHandler(SimpleHTTPRequestHandler):
 
     img = Image.open(now + ".jpg").convert("RGB")
     img.save(now + "jp.jpg")
+
+
+    ocr = PaddleOCR(use_angle_cls=True, lang='ch')
+
+    result = ocr.ocr(body, cls=True)
+    if result is not None:
+      for idx in range(len(result)):
+          res = result[idx]
+          if res is not None:
+            for line in res:
+                print(line)
 
     self.send_response(200)
     self.send_header("content-length", "0")
